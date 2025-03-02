@@ -1,21 +1,14 @@
-import React from 'react';
-import ContactItem from '../ContactItem/ContactItem';
+import ContactItem from "../ContactItem/ContactItem";
+import styles from "./ContactList.module.css";
 
-const ContactList = ({ contacts }) => {
-    if (!contacts || contacts.length === 0) {
-      return <p>No contacts available</p>;
-    }
-  
-    return (
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            {contact.name}: {contact.number}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-  
-  export default ContactList;
-  
+const ContactList = ({ contacts, deleteContact }) => {
+  return (
+    <ul className={styles.list}>
+      {contacts.map((contact) => (
+        <ContactItem key={contact.id} contact={contact} deleteContact={deleteContact} />
+      ))}
+    </ul>
+  );
+};
+
+export default ContactList;

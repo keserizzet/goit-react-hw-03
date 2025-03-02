@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ContactForm from "./components/ContactForm/ContactForm";
+import SearchBox from "./components/SearchBox/SearchBox";
 import ContactList from "./components/ContactList/ContactList";
 
 const App = () => {
-  const [contacts, setContacts] = useState([
-    { id: "id-1", name: "John Doe", number: "123-456-7890" },
-    { id: "id-2", name: "Jane Smith", number: "987-654-3210" },
-  ]);
-  
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem("contacts");
+    return savedContacts ? JSON.parse(savedContacts) : [];
+  });
   const [filter, setFilter] = useState("");
 
-  // Kişi ekleme fonksiyonu
-  const handleAddContact = (newContact) => {
-    setContacts((prevContacts) => [...prevContacts, newContact]);
+  useEffect(() => {
+    localStorage.setItem("contacts", JSON.stringify(contacts));
+  }, [contacts]);
+
+  const addContact = (newContact) => {
+    setContacts((prev) => [...prev, newContact]);
   };
 
-  // Arama fonksiyonu
+  const deleteContact = (id) => {
+    setContacts((prev) => prev.filter((contact) => contact.id !== id));
+  };
+
   const filteredContacts = contacts.filter((contact) =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
   );
@@ -23,14 +29,9 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <ContactForm onAddContact={handleAddContact} />
-      <input
-        type="text"
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        placeholder="Search contacts"
-      />
-      <ContactList contacts={filteredContacts} />
+      <ContactForm addContact={addContact} />
+      <SearchBox filter={filter} setFilter={setFilter} />
+      <ContactList contacts={filteredContacts} deleteContact={deleteContact} />
     </div>
   );
 };
